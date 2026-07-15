@@ -245,7 +245,27 @@ st.markdown(
 )
 
 RTC_CONFIGURATION = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+    {
+        "iceServers": [
+            {"urls": ["stun:stun.l.google.com:19302"]},
+            # STUN alone often isn't enough once the server is in the cloud
+            # and the browser is behind a home/office NAT -- a TURN server
+            # relays the connection when a direct path can't be found. This
+            # is a free public relay (openrelay.metered.ca), fine for a
+            # hackathon demo; for heavier real-world use you'd want your
+            # own TURN credentials (e.g. via Twilio's free tier).
+            {
+                "urls": ["turn:openrelay.metered.ca:80"],
+                "username": "openrelayproject",
+                "credential": "openrelayproject",
+            },
+            {
+                "urls": ["turn:openrelay.metered.ca:443"],
+                "username": "openrelayproject",
+                "credential": "openrelayproject",
+            },
+        ]
+    }
 )
 
 ctx = webrtc_streamer(
